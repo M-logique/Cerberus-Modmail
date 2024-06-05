@@ -103,13 +103,13 @@ class DevCommands(commands.Cog):
     @commands.is_owner()
     async def _reload(self, ctx):
         loaded = []
-        for folder in os.listdir('./Cogs'):
+        for folder in os.listdir('./cogs'):
                 if folder == "tasks": continue
-                for filename in os.listdir(f"./Cogs/{folder}"):
+                for filename in os.listdir(f"./cogs/{folder}"):
                     if filename.endswith('.py'):
-                        try: self.client.unload_extension(f'Cogs.{folder}.{filename[:-3]}')
+                        try: self.client.unload_extension(f'cogs.{folder}.{filename[:-3]}')
                         except: pass
-                        try:self.client.load_extension(f'Cogs.{folder}.{filename[:-3]}')
+                        try:self.client.load_extension(f'cogs.{folder}.{filename[:-3]}')
                         except: pass
                         loaded.append(f"Cogs.{folder}.{filename[:-3]}")
         else:
