@@ -1,0 +1,16 @@
+version: '1'
+services:
+  
+
+  bot:
+    env_file: .env
+    container_name: 'Cerberus-ModMail'
+    build:
+      context: .
+    stop_signal: SIGINT
+    restart: unless-stopped
+    command: "python3 main.py"
+    volumes:
+      - .:/app
+      
+      
