@@ -1,5 +1,7 @@
 import logging as _logging
+
 from colorlog import ColoredFormatter as _ColoredFormatter
+
 
 class DiscordLogger(_logging.Logger):
     def __init__(self, name):

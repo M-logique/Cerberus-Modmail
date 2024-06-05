@@ -1,7 +1,9 @@
 import os
 
 from disnake.ext import commands
+
 from cerberus.utils.logger import logger
+
 
 class OnReady(commands.Cog):
     

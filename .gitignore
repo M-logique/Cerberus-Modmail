@@ -5,7 +5,11 @@ __pycache__/
 
 # C extensions
 *.so
+
+# Fuck 
 .env
+test.py
+./DataBase.db
 
 # Distribution / packaging
 .Python

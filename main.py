@@ -20,7 +20,6 @@ async def setup_hook():
 client = Client(intents=disnake.Intents.all(),
                 allowed_mentions=disnake.AllowedMentions(replied_user=False),
                 command_sync_flags=command_sync_flags,
-                proxy=None,
                 setup_hook=setup_hook)
 
 client.load_extension("cogs.events.on_ready")
