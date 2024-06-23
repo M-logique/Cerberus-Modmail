@@ -5,9 +5,10 @@ import os
 import disnake
 from disnake.ext import commands
 
-from cerberus.core.config import MAIN_COLOR
+from cerberus.core.settings import settings
 from cerberus.utils.functions import chunker, insert_returns
 
+MAIN_COLOR = disnake.Color.from_rgb(*settings.MAIN_COLOR)
 
 class Buttons(disnake.ui.View):
     def __init__(self, author, chunk) -> None:
