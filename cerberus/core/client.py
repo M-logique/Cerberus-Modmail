@@ -2,9 +2,10 @@ from disnake import AllowedMentions as _AllowedMentions
 from disnake import Intents as _Intents
 from disnake.ext import commands as _commands
 
-from ..utils.logger import logger as _Logger
 from ..utils.database import DataBase as _DataBase
+from ..utils.logger import logger as _Logger
 from .settings import settings
+
 
 class Client(_commands.Bot):
     """
