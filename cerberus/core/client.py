@@ -1,11 +1,10 @@
-from typing import Any
-
 from disnake import AllowedMentions as _AllowedMentions
 from disnake import Intents as _Intents
 from disnake.ext import commands as _commands
 
-from ..utils.env import Env as _E
-
+from ..utils.logger import logger as _Logger
+from ..utils.database import DataBase as _DataBase
+from .settings import settings
 
 class Client(_commands.Bot):
     """
@@ -13,53 +12,28 @@ class Client(_commands.Bot):
     """
     def __init__(self, intents: _Intents, 
                 allowed_mentions: _AllowedMentions,
-                setup_hook: Any,
-                command_sync_flags: _commands.CommandSyncFlags):
+                **options):
 
-        prefix = _E.get("PREFIX")
-        guilds = _E.get("GUILDS")
-        owners = _E.get("OWNERS")
-        proxy = _E.get("PROXY")
-        strip_aftre_prefix = _E.get("STRIP_AFTER_PREFIX")
-        
-
-        self.setup_hook = setup_hook
-
-        test_guilds = None
-        owner_ids, owner_id = (None, )*2
-        
-
-        if isinstance(prefix, list): 
-            prefix = _commands.when_mentioned_or(*prefix)
-        
-        else:
-            prefix = _commands.when_mentioned_or(prefix)
-
-        if isinstance(guilds, list):
-            test_guilds = guilds
-        elif isinstance(guilds, int):
-            test_guilds = [guilds]
-        
-        if isinstance(owners, list):
-            owner_ids = owners
-        elif isinstance(owners, int):
-            owner_id = owners
+        self.logger = _Logger("Cerberus-Modmail")
+        self.db = _DataBase("./DataBase.db")
 
 
-        super().__init__(command_prefix=prefix,
+        test_guilds = settings.TEST_GUILDS
+        owner_ids = settings.OWNERS
+        prefix = settings.PREFIX
+        proxy = settings.PROXY
+        strip_aftre_prefix = settings.STRIP_AFTER_PREFIX
+
+
+
+        super().__init__(command_prefix=_commands.when_mentioned_or(*prefix),
                          test_guilds=test_guilds,
                          owner_ids=owner_ids,
-                         owner_id=owner_id,
-                         strip_after_prefix=bool(strip_aftre_prefix),
+                         strip_after_prefix=strip_aftre_prefix,
                          allowed_mentions=allowed_mentions, 
                          intents=intents,
-                         command_sync_flags=command_sync_flags,
                          proxy=proxy,
                          help_command=None,
-                         )
-        
-    async def setup_hook(self):
+                         **options)
 
-        await self.setup_hook()
-        
 

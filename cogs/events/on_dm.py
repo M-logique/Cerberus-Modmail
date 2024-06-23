@@ -4,12 +4,9 @@ import disnake
 from disnake.ext import commands
 from requests import post
 
-from cerberus.core.config import (MAIN_COLOR, MODMAIL_CHANNEL, MODMAIL_WEBHOOK,
-                                  NOTIF_CHANNEL)
-from cerberus.utils.database import DataBase
-from cerberus.utils.env import Env
+from cerberus.core.client import Client
+from cerberus.core.settings import settings
 
-db = DataBase("./DataBase.db")
 
 def send(thread_id, message: disnake.Message): 
 
@@ -19,7 +16,7 @@ def send(thread_id, message: disnake.Message):
              "avatar_url": str(message.author.avatar),
              "allowed_mentions": { "parse": [] }
          }
-    url = MODMAIL_WEBHOOK
+    url = settings.MODMAIL_CHANNEL
     params = {
         "thread_id": thread_id
     }
@@ -30,11 +27,13 @@ def send(thread_id, message: disnake.Message):
     return r
 
 class OnDirectMessage(commands.Cog):
-    def __init__(self, client: commands.Bot) -> None:
+    def __init__(self, client: Client) -> None:
         self.client = client
 
     @commands.Cog.listener()
     async def on_message(self, message: disnake.Message):
+        MAIN_COLOR = disnake.Color.from_rgb(*settings.MAIN_COLOR)
+        db = self.client.db
         if message.guild == None and not message.author.bot: 
             i = db.get("%s-dm"%message.author.id, "channels")
             if not i:
@@ -44,8 +43,12 @@ class OnDirectMessage(commands.Cog):
                 embed.set_footer(icon_url=message.author.avatar,
                                   text="New Ticket from %s"%message.author.id)
 
+                desc = """**سلام وقت بخیر تیکت مادمیل شما ساخته شد. 
+در صورت موفقیت ارسال پیام اموجی تایید زیر پیام شما ریکت می شود (:white_check_mark:) 
+پیام شما در اسرع وقت توسط تیم ما جواب داده میشود ؛ با تشکر از همراهی شما.
+**"""
                 embed2 = disnake.Embed(title="تیکت شما با موفقیت ساخته شد.",
-                                       description="درود جناب تیکت مادمیل شما ساخته شد. پیام های خود را ارسال کنید.\n در صورت موفقیت ارسال پیام اموجی تایید زیر پیام شما ریکت می شود (✅)",
+                                       description=desc,
                                        color=MAIN_COLOR,
                                        timestamp=datetime.datetime.now(),
                                        )
@@ -55,7 +58,7 @@ class OnDirectMessage(commands.Cog):
                                             custom_id="close_this_shit",
                                             label="Close")
                 
-                channel = await self.client.fetch_channel(MODMAIL_CHANNEL)
+                channel = await self.client.fetch_channel(settings.MODMAIL_CHANNEL)
                 thread = await channel.create_thread(
                         name="%s-ticket"% message.author,
                         auto_archive_duration=60,
@@ -74,14 +77,14 @@ class OnDirectMessage(commands.Cog):
                                                custom_id="add_%s"%thread.thread.id,
                                                emoji="📨")
                 
-                notification_channels = await self.client.fetch_channel(NOTIF_CHANNEL)
-                await notification_channels.send(content="<@&1247524809697656976>",
+                notification_channels = await self.client.fetch_channel(settings.MODMAIL_NOTIFICATIONS_CHANNEL)
+                await notification_channels.send(content="<@&1050032045126074419>",
                                                  embed=embed4,
                                                  components=add_button)
                 if len(message.attachments) != 0:
                     attachments = [f"[{i.filename}]({i.url})" for i in message.attachments]
 
-                    post(url="%s?thread_id=%s"%(MODMAIL_WEBHOOK, i),
+                    post(url="%s?thread_id=%s"%(settings.MODMAIL_WEBHOOK, i),
                         
                         json={
                             "content": str('\n'.join(attachments)),
@@ -108,7 +111,7 @@ class OnDirectMessage(commands.Cog):
                 await message.add_reaction("✅")
                 if len(message.attachments) != 0:
                     attachments = [f"[{i.filename}]({i.url})" for i in message.attachments]
-                    post(url="%s?thread_id=%s"%(MODMAIL_WEBHOOK, i),
+                    post(url="%s?thread_id=%s"%(settings.MODMAIL_WEBHOOK, i),
                         
                         json={
                             "content": str('\n'.join(attachments)),
@@ -122,7 +125,7 @@ class OnDirectMessage(commands.Cog):
             if i != None and i != "" and i != False:
                 ch = await self.client.fetch_user(i)
                 
-                if not str(message.author.id) in MODMAIL_WEBHOOK and not message.author.id == self.client.user.id:
+                if not str(message.author.id) in settings.MODMAIL_WEBHOOK and not message.author.id == self.client.user.id:
                     try: 
                         await ch.send("%s‌"%(message.content))
                         await message.add_reaction("✅")

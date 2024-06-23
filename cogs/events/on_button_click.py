@@ -2,24 +2,25 @@ import disnake
 from disnake.ext import commands
 from requests import post
 
-from cerberus.utils.database import DataBase
-from cerberus.utils.env import Env
 from cerberus.utils.functions import create_error_embed
-
-MODMAIL_WEBHOOK = Env.get("MODMAIL_WEBHOOK")
-MODMAIL_CHANNEL = Env.get("MODMAIL_CHANNEL")
-NOTIF_CHANNEL = Env.get("MODMAIL_NOTIFICATIONS_CHANNEL")
+from cerberus.core.settings import settings
+from cerberus.core.client import Client
 
 
-db = DataBase("./DataBase.db")
+MODMAIL_WEBHOOK = settings.MODMAIL_WEBHOOK
+MODMAIL_CHANNEL = settings.MODMAIL_CHANNEL
+NOTIF_CHANNEL = settings.MODMAIL_NOTIFICATIONS_CHANNEL
+
+
 
 class OnButtonClick(commands.Cog):
-    def __init__(self, client: commands.Bot) -> None:
+    def __init__(self, client: Client) -> None:
         self.client = client
 
     @commands.Cog.listener()
     async def on_button_click(self, inter: disnake.MessageInteraction):
         custom_id = inter.component.custom_id
+        db = self.client.db
         if custom_id == "close_this_shit":
             await inter.response.send_message("🔒 **This ticket was closed by `%s`**" % inter.author)
             user = db.get("%s-mm"%inter.channel.id, "channels")
