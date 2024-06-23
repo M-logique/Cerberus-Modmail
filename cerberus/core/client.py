@@ -3,7 +3,7 @@ from disnake import Intents as _Intents
 from disnake.ext import commands as _commands
 
 from ..utils.database import DataBase as _DataBase
-from ..utils.logger import logger as _Logger
+from ..utils.logger import DiscordLogger as _Logger
 from .settings import settings
 
 
@@ -19,7 +19,7 @@ class Client(_commands.Bot):
         self.db = _DataBase("./DataBase.db")
 
 
-        test_guilds = settings.TEST_GUILDS
+        test_guilds = settings.GUILDS
         owner_ids = settings.OWNERS
         prefix = settings.PREFIX
         proxy = settings.PROXY

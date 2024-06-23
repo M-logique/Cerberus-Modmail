@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,12 +9,12 @@ class Settings(BaseSettings):
 
     # Main Vars
 
-    OWNERS: list[ int ] = []
+    OWNERS: List[int] = []
     DISCORD_TOKEN: str
-    MAIN_COLOR: list[int] = [47, 49, 54]
-    TEST_GUILDS: list[int] = []
+    MAIN_COLOR: List[int] = [47, 49, 54]
+    GUILDS: List[int] = []
     PROXY: str | None = None
-    PREFIX: list[str] | str = ","
+    PREFIX: List[str] | str = ","
     STRIP_AFTER_PREFIX: bool | None = True
 
     # ModMail stuff
