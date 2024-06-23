@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -13,9 +13,9 @@ class Settings(BaseSettings):
     DISCORD_TOKEN: str
     MAIN_COLOR: List[int] = [47, 49, 54]
     GUILDS: List[int] = []
-    PROXY: str | None = None
-    PREFIX: List[str] | str = ","
-    STRIP_AFTER_PREFIX: bool | None = True
+    PROXY: Optional[str] = None
+    PREFIX: List[str] = ","
+    STRIP_AFTER_PREFIX: Optional[bool] = True
 
     # ModMail stuff
     
