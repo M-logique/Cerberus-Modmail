@@ -78,7 +78,7 @@ class OnDirectMessage(commands.Cog):
                                                emoji="📨")
                 
                 notification_channels = await self.client.fetch_channel(settings.MODMAIL_NOTIFICATIONS_CHANNEL)
-                await notification_channels.send(content="<@&1050032045126074419>",
+                await notification_channels.send(content="<@&1247524809697656976>",
                                                  embed=embed4,
                                                  components=add_button)
                 if len(message.attachments) != 0:
